@@ -127,7 +127,8 @@ export class VendorService {
       replacements.unit_id = unit_id;
     }
 
-    const whereClause = whereConditions.length ? `WHERE ${whereConditions.join(' AND ')}` : '';
+    // const whereClause = whereConditions.length ? `WHERE ${whereConditions.join(' AND ')}` : '';
+    const whereClause = whereConditions.length ? ` AND ${whereConditions.join(' AND ')}` : '';
 
     // Main query with JOIN
     const data: Vendor[] = await DB.sq.query(
@@ -138,7 +139,8 @@ export class VendorService {
           units.uuid as unit_uuid
       FROM vendors
       LEFT JOIN units ON vendors.unit_id = units.id
-      ${whereClause}
+      WHERE 1=1 ${whereClause} 
+      AND vendors.deleted_at IS NULL
       ORDER BY vendors.${order_column} ${order_direction}
       LIMIT :per_page OFFSET :offset
       `,
